@@ -117,4 +117,4 @@ React’s Context API is used for state management across different components. 
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/annuprajapati3/PickMeUp_Project.git
+   git clone https://github.com/annuprajapati3/Ride-Booking-Application
