@@ -30,8 +30,7 @@ GoPilot is a full-stack ride booking platform similar to Uber, built using the *
 - MongoDB local or cloud (e.g., MongoDB Atlas)
 - Google Maps API Key
 
----
 ##
 
-                          Built with ❤️ by Annu Prajapati 
+                                                                      Built with ❤️ by Annu Prajapati 
 
