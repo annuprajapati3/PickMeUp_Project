@@ -118,3 +118,13 @@ React’s Context API is used for state management across different components. 
 1. **Clone the Repository:**
    ```bash
    git clone https://github.com/annuprajapati3/Ride-Booking-Application
+2. **Navigate to the Frontend Directory:**
+   ```bash
+   cd frontend
+3. **Install Dependencies:**
+   ```bash
+   npm install
+4. **Start the Development Server:**
+   ```bash
+   npm start
+5. **Open your browser and visit http://localhost:3000 to interact with the application.**
