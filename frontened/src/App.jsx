@@ -11,6 +11,7 @@ import UserHome from "./routersPages/UserHome";
 import CaptainHomePage from "./routersPages/CaptainHomePage";
 import CaptainRidingPage from "./routersPages/CaptainRidingPage";
 import UserRiddingPage from "./routersPages/UserRiddingPage";
+import LiveMap from "./routersPages/LiveMap";
 
 const App = ()=>{
   return<>
@@ -25,6 +26,7 @@ const App = ()=>{
       <Route path="/CaptainHome" element={<CaptainProtectedWraper><CaptainHomePage></CaptainHomePage></CaptainProtectedWraper>}></Route>
       <Route path="/captain/riding" element={<CaptainProtectedWraper><CaptainRidingPage></CaptainRidingPage></CaptainProtectedWraper>}></Route>
       <Route path="/user/riding" element={<UserProtectWraaper><UserRiddingPage></UserRiddingPage></UserProtectWraaper>}></Route>
+      <Route path="/map" element={<LiveMap pickup={"akgec"} destination={"delhi"}></LiveMap>}></Route>
     </Routes>
     
   </>

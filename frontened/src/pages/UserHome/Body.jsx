@@ -1,4 +1,4 @@
-import map from "../../assets/google.jpg";
+
 import axios from "axios";
 import { GoDotFill } from "react-icons/go";
 import { MdStopCircle } from "react-icons/md";
@@ -14,6 +14,7 @@ import { useSocket } from '../../context/SocketContex';
 import {UserDataContext} from '../../context/UserContext';
 import driverimage from '../../assets/driverimage.webp';
 import { useNavigate } from "react-router-dom";
+import LiveMap from "../../routersPages/LiveMap";
 const Body = () => {
   const [ride, Setride] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -31,6 +32,8 @@ const Body = () => {
   const {user} = useContext(UserDataContext)
   const CaptainData = useRef();
   const navigate = useNavigate();
+  const [pickupCoords , setPickupCoords] = useState(null)
+  const [destinationCoords , setDestinationCoords] = useState(null)
   useEffect(()=>{
     socket.emit("join" , {userType : "user" , userId : user._id})
     socket.on('ride-confirm' , (data)=>{
@@ -56,7 +59,6 @@ const Body = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      console.log(response.data)
       // Ensure correct data is stored in state
       SetPickupSuggestions(response.data || []);
     } catch (error) {
@@ -113,6 +115,7 @@ const Body = () => {
     if (inputValue.length > 1) {
       pickupdata(inputValue); // Fetch suggestions dynamically
     }
+
   };
   const OnChangeDestination = (e) => {
     const inputdatadestination = e.target.value;
@@ -167,6 +170,59 @@ const Body = () => {
     createRide();
     SetConfirmRide(true);
   }
+  const token = localStorage.getItem("token");
+  useEffect(() => {
+      const fetchPickupCoords = async () => {
+        if (!ride) return;
+  
+        try {
+          const res = await axios.get("http://localhost:3000/getCoordinate", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              address: ride,
+            },
+          });
+  
+          const { lat, lng } = res.data;
+          if (lat && lng) {
+            setPickupCoords([lat, lng]);
+          }
+        } catch (err) {
+          console.error("Pickup fetch error:", err);
+        }
+      };
+  
+      fetchPickupCoords();
+    }, [token , ride]);
+  
+    // Fetch destination coordinates
+    useEffect(() => {
+      const fetchDestinationCoords = async () => {
+        if (!Destination) return;
+  
+        try {
+          const res = await axios.get("http://localhost:3000/getCoordinate", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              address: Destination,
+            },
+          });
+  
+          const { lat, lng } = res.data;
+          if (lat && lng) {
+            setDestinationCoords([lat, lng]);
+          } 
+        } catch (err) {
+          console.error("Destination fetch error:", err);
+        }
+      };
+  
+      fetchDestinationCoords();
+    }, [Destination , token]);
   return (
     <>
       <div className="bg-white mt-1 flex h-auto transition-all duration-500">
@@ -382,8 +438,13 @@ const Body = () => {
           )}
         </div>
         <div className="h-[500px] w-full mt-4 mr-8 overflow-hidden">
-          <img src={map} className="w-full h-full object-cover"></img>
+          {pickupCoords && destinationCoords ? (
+            <LiveMap pickup={pickupCoords} destination={destinationCoords} ride={ride} dest={Destination}/>
+          ) : (
+            <LiveMap />
+          )}
         </div>
+
       </div>
     </>
   );

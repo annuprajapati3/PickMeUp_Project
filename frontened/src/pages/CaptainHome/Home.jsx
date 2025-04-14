@@ -1,4 +1,4 @@
-import map from "../../assets/map.png";
+
 import dummyLady from "../../assets/dummyLady.webp";
 import { IoLocation } from "react-icons/io5";
 import { MdOutlineLocationCity } from "react-icons/md";
@@ -10,17 +10,17 @@ import { useState, useContext, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { CaptainData } from "../../context/CaptainContext";
 import { useSocket } from "../../context/SocketContex";
-
+import { useRide } from "../../context/RideContext";
 import axios from "axios";
+import LiveMap from "../../routersPages/LiveMap";
 const Home = () => {
   const { Captain } = useContext(CaptainData);
   const [confirmRide, SetConfirmRide] = useState(false);
   const [Ridereq, SetRideReq] = useState(false);
   const otp = useRef();
   const navigate = useNavigate();
-  const UserData = useRef(null);
   const { socket } = useSocket();
-
+  const {setUserData , UserData} = useRide();
   useEffect(() => {
     socket.emit("join", { userType: "captain", userId: Captain._id });
     const updateLocation = () => {
@@ -49,16 +49,16 @@ const Home = () => {
 
     updateLocation();
     socket.on("new-ride", (data) => {
-      console.log(data);
+      console.log( "new-ride" , data);
       SetRideReq(true);
-      UserData.current = data;
+      setUserData(data)
     });
-  }, [Captain, socket]);
+  }, [Captain, socket ,setUserData]);
   const token = localStorage.getItem("token")
   const OnClickHandler = async () => {
       const setOtp = otp.current.value;
       const response = await axios.post("http://localhost:3000/captain/ride/start" , {
-        rideId : UserData.current.newRide._id,
+        rideId : UserData.newRide._id,
         otp : setOtp,
       },{
         headers : {Authorization : `Bearer ${token}`}
@@ -73,7 +73,7 @@ const Home = () => {
     const response = await axios.post(
       "http://localhost:3000/captain/ride/confirm",
       {
-        rideId: UserData.current.newRide._id, // replace `yourRideId` with the actual variable holding the ID
+        rideId: UserData.newRide._id, // replace `yourRideId` with the actual variable holding the ID
       },
       {
         headers: {
@@ -87,8 +87,8 @@ const Home = () => {
   return (
     <>
       <div className="bg-white flex  my-1.5 overflow-hidden">
-        <div className="h-[530px] ml-4 overflow-hidden">
-          <img src={map}></img>
+        <div className="h-[530px] ml-4 w-2/3">
+          <LiveMap ></LiveMap>
         </div>
         {Ridereq && (
           <div className="border border-gray-300 mx-6 mt-2 p-3.5 shadow rounded-lg w-1/3 overflow-y-scroll h-[530px]">
@@ -104,24 +104,24 @@ const Home = () => {
                       className="w-20 h-20 rounded-full"
                     ></img>
                     <p className="ml-1.5 font-medium text-xl capitalize">
-                      {UserData.current.NewUser.userName}
+                      {UserData.NewUser.userName}
                     </p>
                   </div>
                   <p className="text-lg font-medium">2.2km</p>
                 </div>
                 <div className="flex space-x-1.5 mt-8 pb-2 border-b-2 border-gray-300 shadow-2xl">
                   <IoLocation className="h-5 w-5 mt-1" />
-                  <p className="text-lg ">{UserData.current.newRide.pickup}</p>
+                  <p className="text-lg ">{UserData.newRide.pickup}</p>
                 </div>
                 <div className="flex space-x-1.5 mt-8 pb-2 border-b-2 border-gray-300 shadow-2xl">
                   <MdOutlineLocationCity className="h-5 w-5 mt-1" />
                   <p className="text-lg ">
-                    {UserData.current.newRide.destination}
+                    {UserData.newRide.destination}
                   </p>
                 </div>
                 <div className="flex space-x-1.5 mt-8 pb-2 border-b-2 border-gray-300 shadow-2xl">
                   <MdOutlineCurrencyRupee className="h-5 w-5 mt-1" />
-                  <p className="text-lg ">{UserData.current.newRide.fare}</p>
+                  <p className="text-lg ">{UserData.newRide.fare}</p>
                 </div>
                 <button
                   className="w-full h-10 mt-6 rounded-lg text-lg font-medium bg-gray-400 cursor-pointer"
@@ -149,21 +149,21 @@ const Home = () => {
                         src={dummyLady}
                         className="w-20 h-20 rounded-full"
                       ></img>
-                      <p className="ml-1.5 font-medium text-xl capitalize">{UserData.current.NewUser.userName}</p>
+                      <p className="ml-1.5 font-medium text-xl capitalize">{UserData.NewUser.userName}</p>
                     </div>
                     <p className="text-lg font-medium">2.2km</p>
                   </div>
                   <div className="flex space-x-1.5 mt-8 pb-2 border-b-2 border-gray-300 shadow-2xl">
                     <IoLocation className="h-5 w-5 mt-1" />
-                    <p className="text-lg ">{UserData.current.newRide.pickup}</p>
+                    <p className="text-lg ">{UserData.newRide.pickup}</p>
                   </div>
                   <div className="flex space-x-1.5 mt-8 pb-2 border-b-2 border-gray-300 shadow-2xl">
                     <MdOutlineLocationCity className="h-5 w-5 mt-1" />
-                    <p className="text-lg ">{UserData.current.newRide.destination}</p>
+                    <p className="text-lg ">{UserData.newRide.destination}</p>
                   </div>
                   <div className="flex space-x-1.5 mt-8 pb-2 border-b-2 border-gray-300 shadow-2xl">
                     <MdOutlineCurrencyRupee className="h-5 w-5 mt-1" />
-                    <p className="text-lg ">{UserData.current.newRide.fare}</p>
+                    <p className="text-lg ">{UserData.newRide.fare}</p>
                   </div>
                   <div className="flex space-x-1.5 mt-8 pb-2  border-gray-300 ">
                     <input type="number" placeholder="ENTER OTP" className="h-10 w-60 font-mono  bg-gray-200 shadow" ref={otp}></input>

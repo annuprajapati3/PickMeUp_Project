@@ -1,9 +1,12 @@
-import map from '../../assets/googlemap.jpg';
+
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSocket } from '../../context/SocketContex';
+import LiveMap from '../../routersPages/LiveMap';
+import { useRide } from '../../context/RideContext';
 const UserRides = ()=>{
     const { socket } = useSocket();
+    const {UserData} = useRide();
     const RideInfo = useRef();
     const[confirmRide , SetConfirmRide] = useState(false)
         const navigate = useNavigate();
@@ -15,14 +18,26 @@ const UserRides = ()=>{
     useEffect(() =>{
         socket.on('ride-end' , (data)=>{
             RideInfo.current = data;
-            console.log(RideInfo);
             navigate('/home')
         })
     })
+    // eslint-disable-next-line no-unused-vars
+    const [location , setLocation] = useState(null);
+    useEffect(() => {
+        const watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            setLocation([position.coords.latitude, position.coords.longitude]);
+          },
+          (err) => console.error("Live location error:", err),
+          { enableHighAccuracy: true }
+        );
+    
+        return () => navigator.geolocation.clearWatch(watchId);
+      }, []);
         return<>
             <div className="w-full h-screen relative overflow-hidden">
                 <span className=" absolute left-4 top-4 text-3xl font-bold tracking-wide italic font-sans">PickMeUp</span>
-                <img src={map} className="h-full w-full object-cover" alt="Map" />
+                <LiveMap ></LiveMap>
     
                 {/* Distance Indicator */}
                 <div className="absolute flex justify-between bottom-4 left-4 bg-amber-400 right-4 px-4 py-2 rounded-md text-white font-semibold z-10 w-full h-16 items-center">
