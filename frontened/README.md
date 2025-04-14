@@ -1,4 +1,4 @@
-# 🚕 Ride Booking App – Frontend API Documentation
+# 🚕 Ride Booking App – Frontend Documentation
 
 This project is the **frontend** for the Ride Booking Application (Uber Clone) built using the **MERN Stack**. The frontend is developed with **React.js** for the user interface, **Socket.io** for real-time communication, **Leaflet.js** for map integration, and **Tailwind CSS** for styling.
 
