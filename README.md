@@ -1,4 +1,4 @@
-# 🚖 GoPilot – Real-Time Ride Booking Application
+# 🚖 GoPilot – Ride Booking Application
 
 GoPilot is a full-stack ride booking platform similar to Uber, built using the **MERN Stack** (MongoDB, Express.js, React.js, Node.js) with real-time communication powered by **Socket.io** and interactive maps powered by **Leaflet.js** and **Google Maps API**.
 
